@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Background="Gray" Height="400" Width="500">
-    <Grid>
+        Title="MainWindow" Background="Gray" Height="400" Width="658">
+    <Grid Margin="0,0,25,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="226*"/>
             <ColumnDefinition Width="89*"/>
@@ -17,6 +17,7 @@
                 <DataGridTextColumn Header="Веб сайт" Width="160" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Количество" Width="160" Binding="{Binding Amount}" />
                 <DataGridTextColumn x:Name="Status" Header="Статус" Width="*" Binding="{Binding Status}" />
+                <DataGridTextColumn x:Name="ULR" Header="URL" Width="*" Binding="{Binding URL}" />
             </DataGrid.Columns>
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -25,9 +26,9 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <Button Content="Начать" HorizontalAlignment="Left" Margin="10,321,0,0" VerticalAlignment="Top" Width="62" Click="Button_Click" Height="20"/>
-        <Button Content="Отмена" HorizontalAlignment="Left" Margin="77,321,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_1" Height="20"/>
-        <Button x:Name="btnOpen"  Content="Выбрать файл" HorizontalAlignment="Left" Margin="166,321,0,0" VerticalAlignment="Top" Width="84" Grid.ColumnSpan="2" Click="Button_Click_2"/>
+        <Button x:Name="start" Content="Начать" IsEnabled="False" HorizontalAlignment="Left" Margin="10,321,0,0" VerticalAlignment="Top" Width="62" Click="Button_Click" Height="20"/>
+        <Button x:Name="cancel" Content="Отмена" IsEnabled="False" HorizontalAlignment="Left" Margin="77,321,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_1" Height="20"/>
+        <Button x:Name="btnOpen"  Content="Выбрать файл" HorizontalAlignment="Left" Margin="241,321,0,0" VerticalAlignment="Top" Width="84" Grid.ColumnSpan="2" Click="Button_Click_2"/>
         <TextBox x:Name="tbxFiles" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="44,321,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="20"/>
     </Grid>
 </Window>

@@ -9,5 +9,6 @@ namespace WpfApp1
     public class Urls : webSite
     {
         public string URL { get; set; }
+        public string count { get; set; }
     }
 }

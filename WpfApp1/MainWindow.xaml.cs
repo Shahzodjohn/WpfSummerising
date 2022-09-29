@@ -24,7 +24,7 @@ namespace WpfApp1
             cts = new CancellationTokenSource();
             Urls = new List<Urls>();
         }
-            int index = 0;
+            
         
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -33,6 +33,14 @@ namespace WpfApp1
 
         private void startAction(object sender, RoutedEventArgs e)
         {
+            int index = 0;
+            
+            this.Dispatcher.Invoke(new Action(delegate ()
+            {
+                DataGridXAML.Items.Clear();
+            }));
+
+            List<Urls> count = new List<Urls>();
             var ws = new webSite();
             foreach (var item in Urls)
             {
@@ -42,18 +50,23 @@ namespace WpfApp1
                 HtmlWeb web = new HtmlWeb();
                 HtmlDocument doc = web.Load(item.URL);
 
-                ws = new webSite
+                ws = new Urls
                 {
                     Name = item.Name,
                     Amount = "", //
                     Status = "Загрузка...",
-                    Method = Method.Send
+                    Method = Method.Send,
+                    URL = item.URL,
+                    
                 };
 
   
                 this.Dispatcher.Invoke(new Action(delegate ()
                 {
+                    start.IsEnabled = false;
+                    cancel.IsEnabled = true;
                     DataGridXAML.Items.Add(ws);
+                    
                 }));
 
                    Thread.Sleep(500);
@@ -65,23 +78,56 @@ namespace WpfApp1
                 }));
 
                 var amount = doc.DocumentNode.Descendants("a").Count().ToString();
-                ws = new webSite
+                ws = new Urls
                 {
                     Name = item.Name,
                     Amount = amount,
                     Status = "Успешно!",
-                    Method = Method.Update
+                    Method = Method.Update,
+                     URL = item.URL
                 };
                 this.Dispatcher.Invoke(new Action(delegate ()
                 {
                     DataGridXAML.Items.Add(ws);
+                    count.Add(new Urls
+                    {
+                        Name = ws.Name,
+                        Amount = amount,
+                         URL = item.URL
+                    });
                 }));
+                if (item == Urls.Last())
+                {
+                    //var el = count.Max(x=>x.Amount);
+                    var res = count.FirstOrDefault(s=>s.Amount == count.Max(x => x.Amount));
+                    this.Dispatcher.Invoke(new Action(delegate ()
+                    {
+                        DataGridXAML.Items.Add(new Urls
+                        {
+                             Name = res.Name,
+                              Amount = res.Amount,
+                               Status = "MAXIMUM",
+                                URL = res.URL
+                        });
+                    }));
+                }
             }
+            this.Dispatcher.Invoke(new Action(delegate ()
+            {
+                start.IsEnabled = true;
+                cancel.IsEnabled = false;
+            }));
+            
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             cts.Cancel();
+            this.Dispatcher.Invoke(new Action(delegate ()
+            {
+                cancel.IsEnabled = false;
+            }));
+            cancel.IsEnabled = false;
         }
 
 
@@ -123,6 +169,10 @@ namespace WpfApp1
                 }
                 sFileNames = sFileNames.Substring(1);
                 tbxFiles.Text = sFileNames;
+                this.Dispatcher.Invoke(new Action(delegate ()
+                {
+                    start.IsEnabled = true;
+                }));
             }
         }
     }
