@@ -44,8 +44,6 @@ namespace WpfApp1
             var ws = new webSite();
             foreach (var item in Urls)
             {
-                if (cts.IsCancellationRequested)
-                    break;
                 
                 HtmlWeb web = new HtmlWeb();
                 HtmlDocument doc = web.Load(item.URL);
@@ -96,22 +94,17 @@ namespace WpfApp1
                          URL = item.URL
                     });
                 }));
-                if (item == Urls.Last())
+               
+                if (cts.IsCancellationRequested)
                 {
-                    //var el = count.Max(x=>x.Amount);
-                    var res = count.FirstOrDefault(s=>s.Amount == count.Max(x => x.Amount));
-                    this.Dispatcher.Invoke(new Action(delegate ()
-                    {
-                        DataGridXAML.Items.Add(new Urls
-                        {
-                             Name = res.Name,
-                              Amount = res.Amount,
-                               Status = "MAXIMUM",
-                                URL = res.URL
-                        });
-                    }));
+                    Counter(count);
+                    break;
                 }
+                    
             }
+            if(!cts.IsCancellationRequested)
+                Counter(count);
+
             this.Dispatcher.Invoke(new Action(delegate ()
             {
                 start.IsEnabled = true;
@@ -119,6 +112,20 @@ namespace WpfApp1
                 cts.Cancel();
             }));
             
+        }
+        private void Counter(List<Urls> count)
+        {
+            var res = count.FirstOrDefault(s => s.Amount == count.Max(x => x.Amount));
+            this.Dispatcher.Invoke(new Action(delegate ()
+            {
+                DataGridXAML.Items.Add(new Urls
+                {
+                    Name = res.Name,
+                    Amount = res.Amount,
+                    Status = "MAXIMUM",
+                    URL = res.URL
+                });
+            }));
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -130,7 +137,7 @@ namespace WpfApp1
             }));
             cancel.IsEnabled = false;
         }
-
+        
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {}
