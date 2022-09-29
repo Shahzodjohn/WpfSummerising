@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,6 +20,7 @@ namespace WpfApp1
     {
         private CancellationTokenSource cts;
         private List<Urls> Urls;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,23 +30,24 @@ namespace WpfApp1
             process.FontSize = 17;
             process.Foreground = Brushes.DarkRed;
             process.FontWeight = FontWeights.Bold;
+
         }
             
         
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             await Task.Run(() => startAction( sender,  e));
-        
         }
 
         private void startAction(object sender, RoutedEventArgs e)
         {
-            cts = new CancellationTokenSource();
-            
-            int index = 0;
+            cts = new CancellationTokenSource(); int index = 0;
+
             this.Dispatcher.Invoke(new Action(delegate ()
             {
+                btnOpen.IsEnabled = false;
                 DataGridXAML.Items.Clear();
+                process.Text = "Запущено";
                 process.FontSize = 17;
                 process.Foreground = Brushes.DarkGreen;
                 process.FontWeight = FontWeights.Bold;
@@ -52,67 +55,62 @@ namespace WpfApp1
 
             List<Urls> count = new List<Urls>();
             var ws = new webSite();
-            foreach (var item in Urls)
+            List<Urls> allRoutes = new List<Urls>();
+            allRoutes.AddRange(Urls);
+
+            foreach (var item in allRoutes)
             {
-                
+                if (cts.IsCancellationRequested)
+                {
+                    Counter(count);
+                    break;
+                }
+
                 HtmlWeb web = new HtmlWeb();
                 HtmlDocument doc = web.Load(item.URL);
 
                 ws = new Urls
                 {
-                    Name = item.Name,
-                    Amount = "", //
                     Status = "Загрузка...",
                     Method = Method.Send,
                     URL = item.URL,
-                    
                 };
-
-  
+                
                 this.Dispatcher.Invoke(new Action(delegate ()
                 {
                     start.IsEnabled = false;
                     cancel.IsEnabled = true;
                     DataGridXAML.Items.Add(ws);
-                    
+
                 }));
 
-                   Thread.Sleep(500);
-      
+                Thread.Sleep(500);
+
                 this.Dispatcher.Invoke(new Action(delegate ()
                 {
                     DataGridXAML.Items.RemoveAt(index);
                     index++;
                 }));
 
-                var amount = doc.DocumentNode.Descendants("a").Count().ToString();
+                var amount = doc.DocumentNode.Descendants("a").Count();
                 ws = new Urls
                 {
-                    Name = item.Name,
                     Amount = amount,
                     Status = "Успешно!",
                     Method = Method.Update,
-                     URL = item.URL
+                    URL = item.URL
                 };
                 this.Dispatcher.Invoke(new Action(delegate ()
                 {
                     DataGridXAML.Items.Add(ws);
                     count.Add(new Urls
                     {
-                        Name = ws.Name,
                         Amount = amount,
-                         URL = item.URL
+                        URL = item.URL
                     });
                 }));
-               
-                if (cts.IsCancellationRequested)
-                {
-                    Counter(count);
-                    break;
-                }
-                    
             }
-            if(!cts.IsCancellationRequested)
+            if (!cts.IsCancellationRequested)
                 Counter(count);
 
             this.Dispatcher.Invoke(new Action(delegate ()
@@ -123,24 +121,25 @@ namespace WpfApp1
                 process.FontSize = 17;
                 process.Foreground = Brushes.DarkRed;
                 process.FontWeight = FontWeights.Bold;
+                btnOpen.IsEnabled = true;
                 cts.Cancel();
             }));
-            
         }
 
         private void Counter(List<Urls> count)
         {
             var res = count.FirstOrDefault(s => s.Amount == count.Max(x => x.Amount));
+
             this.Dispatcher.Invoke(new Action(delegate ()
             {
                 DataGridXAML.Items.Add(new Urls
                 {
-                    Name = res.Name,
                     Amount = res.Amount,
                     Status = "MAXIMUM",
                     URL = res.URL
                 });
             }));
+
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -162,41 +161,52 @@ namespace WpfApp1
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            Urls.Clear();
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Filter = "Textfiles|*.txt|All Files|*.*";
             fileDialog.DefaultExt = ".log";
+
             Nullable<bool> dialogOk = fileDialog.ShowDialog();
-            using (var reader = new StreamReader(fileDialog.FileName))
+            foreach (var fileName in fileDialog.FileNames)
             {
-                string line; var Url = String.Empty; string Name;
-                
-                while ((line = reader.ReadLine()) != null)
+                using (var reader = new StreamReader(fileName))
                 {
-                    var data = line.Split("|").ToList();
-                    Url = data.First();
-                    Name = data.Last();
-                    Urls.Add(new WpfApp1.Urls
+                    string line; var Url = String.Empty; string Name;
+
+                    while ((line = reader.ReadLine()) != null)
                     {
-                          URL = Url,
-                          Name = Name
-                    });
+                        var data = line.Split("|").ToList();
+                        Url = data.First();
+                        //Name = data.Last();
+        
+                        var check = Urls.FirstOrDefault(x=>x.URL == Url);
+                        if (check == null)
+                        {
+                            Urls.Add(new WpfApp1.Urls
+                            {
+                                URL = Url,
+                                //Name = Name
+                            });
+                        }
+                    }
+                }
+                if (dialogOk == true)
+                {
+                    string sFileNames = "";
+                    foreach (var sFileName in fileDialog.FileNames)
+                    {
+                        sFileNames += ";" + sFileName;
+                    }
+                    sFileNames = sFileNames.Substring(1);
+                    tbxFiles.Text = sFileNames;
+                    this.Dispatcher.Invoke(new Action(delegate ()
+                    {
+                        start.IsEnabled = true;
+                    }));
                 }
             }
-            if (dialogOk == true)
-            {
-                string sFileNames = "";
-                foreach (var sFileName in fileDialog.FileNames)
-                {
-                    sFileNames += ";" + sFileName;
-                }
-                sFileNames = sFileNames.Substring(1);
-                tbxFiles.Text = sFileNames;
-                this.Dispatcher.Invoke(new Action(delegate ()
-                {
-                    start.IsEnabled = true;
-                }));
-            }
+            
         }
     }
 }

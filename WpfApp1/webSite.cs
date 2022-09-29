@@ -9,7 +9,7 @@ namespace WpfApp1
     public class webSite
     {
         public string Name { get; set; }
-        public string Amount { get; set; }
+        public int Amount { get; set; }
         public string Status { get; set; }
         public Method Method { get; set; }
     }
