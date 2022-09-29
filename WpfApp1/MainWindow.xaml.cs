@@ -25,7 +25,9 @@ namespace WpfApp1
             cts = new CancellationTokenSource();
             Urls = new List<Urls>();
             process.Text = "Остановлено";
-            process.Foreground = Brushes.Red;
+            process.FontSize = 17;
+            process.Foreground = Brushes.DarkRed;
+            process.FontWeight = FontWeights.Bold;
         }
             
         
@@ -43,8 +45,9 @@ namespace WpfApp1
             this.Dispatcher.Invoke(new Action(delegate ()
             {
                 DataGridXAML.Items.Clear();
-                process.Text = "Запущено";
-                process.Foreground = Brushes.Green;
+                process.FontSize = 17;
+                process.Foreground = Brushes.DarkGreen;
+                process.FontWeight = FontWeights.Bold;
             }));
 
             List<Urls> count = new List<Urls>();
@@ -117,7 +120,9 @@ namespace WpfApp1
                 start.IsEnabled = true;
                 cancel.IsEnabled = false;
                 process.Text = "Остановлено";
-                process.Foreground = Brushes.Red;
+                process.FontSize = 17;
+                process.Foreground = Brushes.DarkRed;
+                process.FontWeight = FontWeights.Bold;
                 cts.Cancel();
             }));
             
