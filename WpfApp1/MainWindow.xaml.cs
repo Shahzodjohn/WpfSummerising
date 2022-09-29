@@ -33,8 +33,8 @@ namespace WpfApp1
 
         private void startAction(object sender, RoutedEventArgs e)
         {
+            cts = new CancellationTokenSource();
             int index = 0;
-            
             this.Dispatcher.Invoke(new Action(delegate ()
             {
                 DataGridXAML.Items.Clear();
@@ -116,6 +116,7 @@ namespace WpfApp1
             {
                 start.IsEnabled = true;
                 cancel.IsEnabled = false;
+                cts.Cancel();
             }));
             
         }
