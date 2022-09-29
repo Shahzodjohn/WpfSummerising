@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace WpfApp1
 {
@@ -23,21 +24,27 @@ namespace WpfApp1
             InitializeComponent();
             cts = new CancellationTokenSource();
             Urls = new List<Urls>();
+            process.Text = "Остановлено";
+            process.Foreground = Brushes.Red;
         }
             
         
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             await Task.Run(() => startAction( sender,  e));
+        
         }
 
         private void startAction(object sender, RoutedEventArgs e)
         {
             cts = new CancellationTokenSource();
+            
             int index = 0;
             this.Dispatcher.Invoke(new Action(delegate ()
             {
                 DataGridXAML.Items.Clear();
+                process.Text = "Запущено";
+                process.Foreground = Brushes.Green;
             }));
 
             List<Urls> count = new List<Urls>();
@@ -109,10 +116,13 @@ namespace WpfApp1
             {
                 start.IsEnabled = true;
                 cancel.IsEnabled = false;
+                process.Text = "Остановлено";
+                process.Foreground = Brushes.Red;
                 cts.Cancel();
             }));
             
         }
+
         private void Counter(List<Urls> count)
         {
             var res = count.FirstOrDefault(s => s.Amount == count.Max(x => x.Amount));

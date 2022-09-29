@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Background="Gray" Height="400" Width="658">
+        Title="MainWindow" Background="Gray" Height="418" Width="658">
     <Grid Margin="0,0,25,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="226*"/>
@@ -30,5 +30,6 @@
         <Button x:Name="cancel" Content="Отмена" IsEnabled="False" HorizontalAlignment="Left" Margin="77,321,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_1" Height="20"/>
         <Button x:Name="btnOpen"  Content="Выбрать файл" HorizontalAlignment="Left" Margin="241,321,0,0" VerticalAlignment="Top" Width="84" Grid.ColumnSpan="2" Click="Button_Click_2"/>
         <TextBox x:Name="tbxFiles" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="44,321,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="20"/>
+        <TextBlock x:Name="process" HorizontalAlignment="Left" Margin="10,346,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="85"/>
     </Grid>
 </Window>
