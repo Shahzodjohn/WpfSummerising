@@ -8,9 +8,9 @@
         Title="MainWindow" Background="Gray" Height="400" Width="500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="469*"/>
-            <ColumnDefinition Width="35*"/>
-            <ColumnDefinition Width="296*"/>
+            <ColumnDefinition Width="226*"/>
+            <ColumnDefinition Width="89*"/>
+            <ColumnDefinition Width="185*"/>
         </Grid.ColumnDefinitions>
         <DataGrid x:Name="DataGridXAML" Margin="10,10,10,0" VerticalAlignment="Top" Height="306" SelectionChanged="DataGridXAML_SelectionChanged" Grid.ColumnSpan="3">
             <DataGrid.Columns>
@@ -25,7 +25,9 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <Button Content="Начать" HorizontalAlignment="Left" Margin="10,321,0,0" VerticalAlignment="Top" Width="62" Click="Button_Click"/>
-        <Button Content="Отмена" HorizontalAlignment="Left" Margin="77,321,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_1"/>
+        <Button Content="Начать" HorizontalAlignment="Left" Margin="10,321,0,0" VerticalAlignment="Top" Width="62" Click="Button_Click" Height="20"/>
+        <Button Content="Отмена" HorizontalAlignment="Left" Margin="77,321,0,0" VerticalAlignment="Top" Width="55" Click="Button_Click_1" Height="20"/>
+        <Button x:Name="btnOpen"  Content="Выбрать файл" HorizontalAlignment="Left" Margin="166,321,0,0" VerticalAlignment="Top" Width="84" Grid.ColumnSpan="2" Click="Button_Click_2"/>
+        <TextBox x:Name="tbxFiles" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="44,321,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Height="20"/>
     </Grid>
 </Window>
